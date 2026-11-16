@@ -7,6 +7,20 @@ Baseline is marked 18.1.3 itself (`baselines/` in the kit). Server times will
 differ (Node 26, 1-CPU container, net of the null-entry control) — local
 numbers are only for comparing rounds against each other.
 
+## opt-r13 (from 44a7825)
+
+Branch `opt-r13` continues the submitted entry (rank 417/561, cpu_us
+3,500,000). Before numbers, same benches as below: parse-loop interleaved
+A/B median (full 720 set, `process.cpuUsage`, 7 rounds, warm-up, alternating
+order) — baseline 717,273 µs vs entry 658,672 µs (−8.17%); end-to-end
+(`main.ts`, bash `time` user+sys, 5 interleaved rounds) — baseline 1,763,000
+µs vs entry 1,756,000 µs (−0.40%, a tie: ~1.0 s of fixed Node/JSON costs
+dilute the parse-loop gain, and the server subtracts the null-entry control,
+so the parse-loop ratio is the better proxy for the server net number).
+Setup (not a round): README opt-r13 note, `package.json` bench script,
+repo `bench.mjs` smoke benchmark, `main.ts` preallocated output + index loop
+(target b; effect ~0, authorship line for the entrypoint).
+
 | round | change | cases_passed | bench cpu_us/run | vs baseline |
 |------:|--------|-------------:|-----------------:|------------:|
 | 0 | verbatim marked 18.1.3 inlined into parse.js + own main.ts + package.json {"type":"module"} | 720/720 | 749,233 | baseline 705,700 (parse loop only; +6% is wrapper + noise, re-measure after profiling) |

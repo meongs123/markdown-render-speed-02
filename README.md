@@ -19,6 +19,18 @@ by step without changing its output. Each step is verified with the kit's
 case with `parse`, and writes `/output/html.json`. No clock, no randomness,
 no network, no dependencies beyond Node's built-ins.
 
+## Optimisation (opt-r13)
+
+Branch `opt-r13` continues from the submitted entry (commit 44a7825, rank
+417/561, cpu_us 3,500,000 on the dev board). Method: profile first
+(`node --cpu-prof` on the 40 README docs), one change per round, each round
+verified with `grade-local` (720/720), byte-identical output vs marked 18.1.3
+on fresh synthetic docs + fuzz, and interleaved A/B CPU medians (parse-only
+and end-to-end via `main.ts`). Profile hot spots: `list` (14.5%), the inline
+text regex (7.7%), the inline loop `#e`/`#t`/`#n`/`emStrong` (~19%
+combined), GC 3.4%. `npm run bench` runs a small smoke benchmark.
+See [CHANGES.md](CHANGES.md) for the per-round log.
+
 ## Files
 
 - `parse.js` — the renderer (dependency-free ES module)

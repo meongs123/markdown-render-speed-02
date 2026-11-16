@@ -23,7 +23,9 @@ interface Case {
 }
 
 const cases: Case[] = JSON.parse(readFileSync(join(inputDir, 'cases.json'), 'utf8'));
-const html: string[] = cases.map((c) => parse(c.markdown));
+// Preallocated output + index loop: avoids the per-case map callback.
+const html: string[] = new Array(cases.length);
+for (let i = 0; i < cases.length; i++) html[i] = parse(cases[i].markdown);
 
 mkdirSync(outputDir, { recursive: true });
 writeFileSync(join(outputDir, 'html.json'), JSON.stringify(html));
