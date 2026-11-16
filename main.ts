@@ -1,4 +1,4 @@
-// Driver for the markdown-render-speed-02 entry.
+// Driver for the markdown-render-speed-02 entry (revised).
 //
 // The harness runs `node /bot/main.ts` (Node 22, type stripping only).
 // It reads every case from /input/cases.json — or MAKEFUN_INPUT_DIR when set —
@@ -7,7 +7,8 @@
 // HTML strings, one per case, in the cases' order.
 //
 // Written from scratch for this entry: no clock, no randomness, no network,
-// no dependency beyond Node's built-ins.
+// no dependency beyond Node's built-ins. Renders each case exactly once,
+// in input order, and writes the output only after every case rendered.
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -22,11 +23,7 @@ interface Case {
 }
 
 const cases: Case[] = JSON.parse(readFileSync(join(inputDir, 'cases.json'), 'utf8'));
-
-const html: string[] = new Array(cases.length);
-for (let i = 0; i < cases.length; i++) {
-  html[i] = parse(cases[i].markdown);
-}
+const html: string[] = cases.map((c) => parse(c.markdown));
 
 mkdirSync(outputDir, { recursive: true });
 writeFileSync(join(outputDir, 'html.json'), JSON.stringify(html));
